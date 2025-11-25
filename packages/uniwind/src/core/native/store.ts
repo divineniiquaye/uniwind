@@ -5,7 +5,7 @@ import { Uniwind } from '../config/config'
 import { UniwindListener } from '../listener'
 import { ComponentState, GenerateStyleSheetsCallback, RNStyle, Style, StyleSheets } from '../types'
 import { cloneWithAccessors } from './native-utils'
-import { parseBoxShadow, parseFontVariant, parseTransformsMutation, resolveGradient } from './parsers'
+import { parseBoxShadow, parseFontVariant, parseTextShadowMutation, parseTransformsMutation, resolveGradient } from './parsers'
 import { UniwindRuntime } from './runtime'
 
 type StylesResult = {
@@ -212,6 +212,10 @@ class UniwindStoreBuilder {
                 configurable: true,
                 enumerable: true,
             })
+        }
+
+        if (result.textShadow !== undefined) {
+            parseTextShadowMutation(result)
         }
 
         return {

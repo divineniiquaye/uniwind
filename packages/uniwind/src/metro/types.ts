@@ -21,6 +21,7 @@ export type UniwindConfig = {
     cssEntryFile: string
     themes: Array<string>
     extraThemes?: Array<string>
+    extraComponents?: Record<string, string>
     dtsFile?: string
     polyfills?: Polyfills
     debug?: boolean

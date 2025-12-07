@@ -39,7 +39,8 @@ const SUPPORTED_COMPONENTS = [
     'VirtualizedList',
 ]
 
-export const nativeResolver = ({
+export const nativeResolver = (extraComponents: Record<string, string>) =>
+({
     context,
     moduleName,
     platform,
@@ -70,10 +71,16 @@ export const nativeResolver = ({
         }
     }
 
+    if (moduleName in extraComponents) {
+        const componentPath = extraComponents[moduleName]!
+        return resolver(context, componentPath, platform)
+    }
+
     return resolution
 }
 
-export const webResolver = ({
+export const webResolver = (extraComponents: Record<string, string>) =>
+({
     context,
     moduleName,
     platform,
@@ -87,6 +94,11 @@ export const webResolver = ({
         || !resolution.filePath.includes(`${sep}react-native-web${sep}`)
     ) {
         return resolution
+    }
+
+    if (moduleName in extraComponents) {
+        const componentPath = extraComponents[moduleName]!
+        return resolver(context, componentPath, platform)
     }
 
     const segments = resolution.filePath.split(sep)

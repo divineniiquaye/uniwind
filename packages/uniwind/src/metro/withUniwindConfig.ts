@@ -45,7 +45,7 @@ export const withUniwindConfig = <T extends MetroConfig>(
             ),
             resolveRequest: (context, moduleName, platform) => {
                 const resolver = config.resolver?.resolveRequest ?? context.resolveRequest
-                const platformResolver = platform === Platform.Web ? webResolver : nativeResolver
+                const platformResolver = (platform === Platform.Web ? webResolver : nativeResolver)(uniwindConfig.extraComponents ?? {})
                 const resolved = platformResolver({
                     context,
                     moduleName,

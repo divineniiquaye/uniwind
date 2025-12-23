@@ -11,6 +11,7 @@ import { UniwindRuntime } from './runtime'
 type StylesResult = {
     styles: RNStyle
     dependencies: Array<StyleDependency>
+    dispose: () => void
 }
 
 class UniwindStoreBuilder {
@@ -21,11 +22,12 @@ class UniwindStoreBuilder {
     private cache = new Map<string, StylesResult>()
     private generateStyleSheetCallbackResult: ReturnType<GenerateStyleSheetsCallback> | null = null
 
-    getStyles(className?: string, state?: ComponentState): StylesResult {
+    getStyles(className?: string, state?: ComponentState, rerender?: () => void): StylesResult {
         if (className === undefined || className === '') {
             return {
                 styles: {},
                 dependencies: [],
+                dispose: () => ({}),
             }
         }
 
@@ -35,7 +37,7 @@ class UniwindStoreBuilder {
             return this.cache.get(cacheKey)!
         }
 
-        const result = this.resolveStyles(className, state)
+        const result = this.resolveStyles(className, state, rerender)
 
         this.cache.set(cacheKey, result)
         UniwindListener.subscribe(
@@ -81,7 +83,7 @@ class UniwindStoreBuilder {
         }
     }
 
-    private resolveStyles(classNames: string, state?: ComponentState) {
+    private resolveStyles(classNames: string, state?: ComponentState, rerender?: () => void) {
         const result = {} as Record<string, any>
         let vars = this.vars
         const dependencies = new Set<StyleDependency>()
@@ -214,9 +216,15 @@ class UniwindStoreBuilder {
             parseTextShadowMutation(result)
         }
 
+        const deps = Array.from(dependencies)
+        const dispose = (__DEV__ || dependencies.size > 0) && rerender
+            ? UniwindListener.subscribe(rerender, deps)
+            : () => ({})
+
         return {
             styles: { ...result } as RNStyle,
-            dependencies: Array.from(dependencies),
+            dependencies: deps,
+            dispose,
         }
     }
 }

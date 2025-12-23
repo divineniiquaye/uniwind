@@ -1,7 +1,5 @@
 import { ComponentProps, useEffect, useReducer } from 'react'
-import { UniwindListener } from '../core/listener'
 import { UniwindStore } from '../core/native'
-import { StyleDependency } from '../types'
 import { AnyObject, Component, OptionMapping, WithUniwind } from './types'
 import { classToColor, classToStyle, isClassProperty, isColorClassProperty, isStyleProperty } from './withUniwindUtils'
 
@@ -16,6 +14,7 @@ export const withUniwind: WithUniwind = <
     : withAutoUniwind(Component)
 
 const withAutoUniwind = (Component: Component<AnyObject>) => (props: AnyObject) => {
+    const [, rerender] = useReducer(() => ({}), {})
     const { dependencies, generatedProps } = Object.entries(props).reduce((acc, [propName, propValue]) => {
         if (isColorClassProperty(propName)) {
             const colorProp = classToColor(propName)
@@ -24,9 +23,9 @@ const withAutoUniwind = (Component: Component<AnyObject>) => (props: AnyObject) 
                 return acc
             }
 
-            const { styles, dependencies } = UniwindStore.getStyles(propValue)
+            const { styles, dispose } = UniwindStore.getStyles(propValue, {}, rerender)
 
-            acc.dependencies.push(...dependencies)
+            acc.dependencies.push(dispose)
             acc.generatedProps[colorProp] = styles.accentColor
 
             return acc
@@ -34,9 +33,9 @@ const withAutoUniwind = (Component: Component<AnyObject>) => (props: AnyObject) 
 
         if (isClassProperty(propName)) {
             const styleProp = classToStyle(propName)
-            const { styles, dependencies } = UniwindStore.getStyles(propValue)
+            const { styles, dispose } = UniwindStore.getStyles(propValue, {}, rerender)
 
-            acc.dependencies.push(...dependencies)
+            acc.dependencies.push(dispose)
             acc.generatedProps[styleProp] ??= []
             acc.generatedProps[styleProp][0] = styles
 
@@ -51,16 +50,9 @@ const withAutoUniwind = (Component: Component<AnyObject>) => (props: AnyObject) 
         }
 
         return acc
-    }, { generatedProps: {} as AnyObject, dependencies: [] as Array<StyleDependency> })
+    }, { generatedProps: {} as AnyObject, dependencies: [] as Array<() => void> })
 
-    const deps = Array.from(new Set(dependencies))
-    const [, rerender] = useReducer(() => ({}), {})
-
-    useEffect(() => {
-        const dispose = UniwindListener.subscribe(rerender, deps)
-
-        return dispose
-    }, [deps])
+    useEffect(() => () => dependencies.forEach(dispose => dispose()), [dependencies])
 
     return (
         <Component
@@ -71,6 +63,7 @@ const withAutoUniwind = (Component: Component<AnyObject>) => (props: AnyObject) 
 }
 
 const withManualUniwind = (Component: Component<AnyObject>, options: Record<PropertyKey, OptionMapping>) => (props: AnyObject) => {
+    const [, rerender] = useReducer(() => ({}), {})
     const { generatedProps, dependencies } = Object.entries(options).reduce((acc, [propName, option]) => {
         const className = props[option.fromClassName]
 
@@ -84,30 +77,23 @@ const withManualUniwind = (Component: Component<AnyObject>, options: Record<Prop
                 return acc
             }
 
-            const { styles, dependencies } = UniwindStore.getStyles(className)
+            const { styles, dispose } = UniwindStore.getStyles(className, {}, rerender)
 
             acc.generatedProps[propName] = styles[option.styleProperty]
-            acc.dependencies.push(...dependencies)
+            acc.dependencies.push(dispose)
 
             return acc
         }
 
-        const { styles, dependencies } = UniwindStore.getStyles(className)
+        const { styles, dispose } = UniwindStore.getStyles(className, {}, rerender)
 
         acc.generatedProps[propName] = styles
-        acc.dependencies.push(...dependencies)
+        acc.dependencies.push(dispose)
 
         return acc
-    }, { generatedProps: {} as AnyObject, dependencies: [] as Array<StyleDependency> })
+    }, { generatedProps: {} as AnyObject, dependencies: [] as Array<() => void> })
 
-    const deps = Array.from(new Set(dependencies))
-    const [, rerender] = useReducer(() => ({}), {})
-
-    useEffect(() => {
-        const dispose = UniwindListener.subscribe(rerender, deps)
-
-        return dispose
-    }, [deps])
+    useEffect(() => () => dependencies.forEach(dispose => dispose()), [dependencies])
 
     return (
         <Component

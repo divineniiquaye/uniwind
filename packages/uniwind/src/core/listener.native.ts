@@ -1,5 +1,4 @@
-/* eslint-disable max-classes-per-file */
-
+import { NativeAppEventEmitter } from 'react-native'
 import { StyleDependency } from '../types'
 
 type SubscribeOptions = {
@@ -17,47 +16,16 @@ const getEventName = (dependency: StyleDependency): string => {
 // Event name for notifyAll
 const ALL_EVENT_NAME = `${EVENT_PREFIX}all`
 
-class WebEventEmitter {
-    private eventTarget: EventTarget
-
-    constructor() {
-        this.eventTarget = new EventTarget()
-    }
-
-    emit(eventName: string, data: any) {
-        const event = new CustomEvent(eventName, { detail: data })
-        this.eventTarget.dispatchEvent(event)
-    }
-
-    addListener(eventName: string, listener: (event: CustomEvent) => void) {
-        const wrappedListener = (event: Event) => {
-            listener(event as CustomEvent)
-        }
-        this.eventTarget.addEventListener(eventName, wrappedListener)
-        return {
-            remove: () => {
-                this.eventTarget.removeEventListener(eventName, wrappedListener)
-            },
-        }
-    }
-}
-
 class UniwindListenerBuilder {
-    private webEventEmitter: WebEventEmitter
-
-    constructor() {
-        this.webEventEmitter = new WebEventEmitter()
-    }
-
     notify(dependencies: Array<StyleDependency>) {
         dependencies.forEach(dep => {
             const eventName = getEventName(dep)
-            this.webEventEmitter.emit(eventName, { dependency: dep })
+            NativeAppEventEmitter.emit(eventName, { dependency: dep })
         })
     }
 
     notifyAll() {
-        this.webEventEmitter.emit(ALL_EVENT_NAME, {})
+        NativeAppEventEmitter.emit(ALL_EVENT_NAME, {})
     }
 
     subscribe(listener: () => void, dependencies: Array<StyleDependency>, options?: SubscribeOptions) {
@@ -84,12 +52,12 @@ class UniwindListenerBuilder {
         // Subscribe to specific dependency events
         dependencies.forEach(dep => {
             const eventName = getEventName(dep)
-            const subscription = this.webEventEmitter.addListener(eventName, wrappedListener)
+            const subscription = NativeAppEventEmitter.addListener(eventName, wrappedListener)
             subscriptions.push(subscription)
         })
 
         // Also subscribe to the "all" event so listeners are notified when notifyAll() is called
-        const allEventSubscription = this.webEventEmitter.addListener(ALL_EVENT_NAME, wrappedListener)
+        const allEventSubscription = NativeAppEventEmitter.addListener(ALL_EVENT_NAME, wrappedListener)
         subscriptions.push(allEventSubscription)
 
         // Return dispose function that removes all subscriptions

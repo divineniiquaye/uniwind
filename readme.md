@@ -40,6 +40,18 @@ Then follow [installation guides](https://docs.uniwind.dev/quickstart)
 - 🧰 Use custom CSS properties directly in React Native
 - 🔥 And [much more](https://docs.uniwind.dev/api/use-uniwind)
 
+## Contributing
+
+Contributions are welcome!
+
+### How to contribute
+
+- Bug Fixes: Check our [Issues](https://github.com/uni-stack/uniwind/issues) for any bugs that need fixing. Make sure to ask before working on an issue.
+- New Features: If you have an idea for a new feature, please open discussion first to get feedback from the community.
+- Refactor and Improvements: If you see areas of the code that could be improved or refactored, open discussion or reach out to the maintainers before making significant changes.
+
+Pull Request that do not follow these guidelines may be closed or not reviewed.
+
 ## License
 
 MIT

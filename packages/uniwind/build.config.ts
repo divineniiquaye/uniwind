@@ -73,7 +73,7 @@ export default defineBuildConfig({
             builder: 'copy',
             input: '../../',
             outDir: './',
-            pattern: ['LICENSE'],
+            pattern: ['LICENSE', 'readme.md'],
         },
         {
             builder: 'copy',

@@ -69,6 +69,29 @@ export class ProcessorBuilder {
         })
     }
 
+    private hasMediaQuery(mq: MediaQueryResolver): boolean {
+        return mq.minWidth !== 0 || mq.maxWidth !== Number.MAX_VALUE || mq.orientation !== null || mq.colorScheme !== null
+    }
+
+    private processDeclarationValue(
+        mq: MediaQueryResolver,
+        varName: string,
+        processedValue: any,
+        context: { isVar: boolean; style: any; important: boolean },
+    ) {
+        const { isVar, style, important } = context
+
+        if (isVar && this.hasMediaQuery(mq)) {
+            this.storeVarWithMediaQuery(varName, processedValue, mq)
+        } else {
+            style[varName] = processedValue
+        }
+
+        if (!isVar && important) {
+            style.importantProperties.push(varName)
+        }
+    }
+
     private addDeclaration(declaration: Declaration, important = false) {
         const isVar = this.declarationConfig.root || this.declarationConfig.className === null
         const mq = this.MQ.processMediaQueries(this.declarationConfig.mediaQueries)
@@ -105,25 +128,12 @@ export class ProcessorBuilder {
             this.meta.className = this.declarationConfig.className
         }
 
+        const context = { isVar, style, important }
+
         if (declaration.property === 'unparsed') {
             const varName = declaration.value.propertyId.property
             const processedValue = this.CSS.processValue(declaration.value.value)
-
-            if (isVar) {
-                const hasMediaQuery = mq.minWidth !== 0 || mq.maxWidth !== Number.MAX_VALUE || mq.orientation !== null || mq.colorScheme !== null
-
-                if (hasMediaQuery) {
-                    this.storeVarWithMediaQuery(varName, processedValue, mq)
-                } else {
-                    style[varName] = processedValue
-                }
-            } else {
-                style[varName] = processedValue
-            }
-
-            if (!isVar && important) {
-                style.importantProperties.push(declaration.value.propertyId.property)
-            }
+            this.processDeclarationValue(mq, varName, processedValue, context)
 
             return
         }
@@ -131,44 +141,14 @@ export class ProcessorBuilder {
         if (declaration.property === 'custom') {
             const varName = declaration.value.name
             const processedValue = this.CSS.processValue(declaration.value.value)
-
-            if (isVar) {
-                const hasMediaQuery = mq.minWidth !== 0 || mq.maxWidth !== Number.MAX_VALUE || mq.orientation !== null || mq.colorScheme !== null
-
-                if (hasMediaQuery) {
-                    this.storeVarWithMediaQuery(varName, processedValue, mq)
-                } else {
-                    style[varName] = processedValue
-                }
-            } else {
-                style[varName] = processedValue
-            }
-
-            if (!isVar && important) {
-                style.importantProperties.push(declaration.value.name)
-            }
+            this.processDeclarationValue(mq, varName, processedValue, context)
 
             return
         }
 
         const varName = declaration.property
         const processedValue = this.CSS.processValue(declaration.value)
-
-        if (isVar) {
-            const hasMediaQuery = mq.minWidth !== 0 || mq.maxWidth !== Number.MAX_VALUE || mq.orientation !== null || mq.colorScheme !== null
-
-            if (hasMediaQuery) {
-                this.storeVarWithMediaQuery(varName, processedValue, mq)
-            } else {
-                style[varName] = processedValue
-            }
-        } else {
-            style[varName] = processedValue
-        }
-
-        if (!isVar && important) {
-            style.importantProperties.push(declaration.property)
-        }
+        this.processDeclarationValue(mq, varName, processedValue, context)
     }
 
     private parseRuleRec(rule: Rule<Declaration, MediaQuery>) {

@@ -17,7 +17,7 @@ class UniwindStoreBuilder {
     vars = {} as Record<string, unknown>
     runtimeThemeVariables = new Map<ThemeName, CSSVariables>()
     private stylesheet = {} as StyleSheets
-    private varsWithMediaQueries = {} as Record<
+    private varsWithMediaQueries = [] as Array<[
         string,
         Array<{
             value: unknown
@@ -25,8 +25,8 @@ class UniwindStoreBuilder {
             maxWidth: number | null
             orientation: Orientation | null
             colorScheme: ColorScheme | null
-        }>
-    >
+        }>,
+    ]>
     private cache = new Map<string, StylesResult>()
     private generateStyleSheetCallbackResult: ReturnType<GenerateStyleSheetsCallback> | null = null
 
@@ -64,10 +64,10 @@ class UniwindStoreBuilder {
         }
 
         const { scopedVars, stylesheet, vars, varsWithMediaQueries } = config
-        this.varsWithMediaQueries = varsWithMediaQueries ?? {}
+        this.vars = varsWithMediaQueries.length > 0 ? { ...vars } : vars
+        this.varsWithMediaQueries = varsWithMediaQueries
         this.generateStyleSheetCallbackResult = config
         this.stylesheet = stylesheet
-        this.vars = vars
 
         const themeVars = scopedVars[`__uniwind-theme-${this.runtime.currentThemeName}`]
         const platformVars = scopedVars[`__uniwind-platform-${Platform.OS}`]
@@ -91,10 +91,7 @@ class UniwindStoreBuilder {
     }
 
     private resolveMediaQueryVars(dependencies: Set<StyleDependency>) {
-        const varsWithMediaQueries = Object.entries(this.varsWithMediaQueries)
-        const vars = varsWithMediaQueries.length > 0 ? { ...this.vars } : this.vars
-
-        for (const [varName, mqVariants] of varsWithMediaQueries) {
+        for (const [varName, mqVariants] of this.varsWithMediaQueries) {
             let bestMatch: { value: unknown; minWidth: number | null } | null = null
 
             for (const variant of mqVariants) {
@@ -118,7 +115,7 @@ class UniwindStoreBuilder {
             }
 
             if (bestMatch !== null) {
-                Object.defineProperty(vars, varName, {
+                Object.defineProperty(this.vars, varName, {
                     configurable: true,
                     enumerable: true,
                     get: () => bestMatch.value,
@@ -126,7 +123,7 @@ class UniwindStoreBuilder {
             }
         }
 
-        return vars
+        return this.vars
     }
 
     private resolveStyles(classNames: string, state?: ComponentState) {

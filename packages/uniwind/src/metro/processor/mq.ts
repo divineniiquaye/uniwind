@@ -9,17 +9,16 @@ export class MQ {
     processMediaQueries(mediaQueries: Array<MediaQuery>) {
         const mq = this.getInitialMediaQueryResolver()
 
-        mediaQueries.forEach(mediaQuery => {
+        for (const mediaQuery of mediaQueries) {
             const { condition, mediaType } = mediaQuery
 
             if ([Platform.Android, Platform.iOS, Platform.Native].includes(mediaType as Platform)) {
                 mq.platform = mediaType as Platform
-
-                return
+                continue
             }
 
             if (condition) this.processCondition(condition, mq)
-        })
+        }
 
         return mq
     }

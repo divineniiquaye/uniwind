@@ -25,7 +25,7 @@ export type GenerateStyleSheetsCallback = (rt: UniwindRuntime) => {
     stylesheet: StyleSheets
     vars: Record<string, unknown>
     scopedVars: Partial<Record<string, Record<string, unknown>>>
-    varsWithMediaQueries?: Record<
+    varsWithMediaQueries: Array<[
         string,
         Array<{
             value: unknown
@@ -33,8 +33,8 @@ export type GenerateStyleSheetsCallback = (rt: UniwindRuntime) => {
             maxWidth: number | null
             orientation: Orientation | null
             colorScheme: ColorScheme | null
-        }>
-    >
+        }>,
+    ]>
 }
 
 type UserThemes = UniwindConfig extends { themes: infer T extends readonly string[] } ? T

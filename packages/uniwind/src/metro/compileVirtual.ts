@@ -60,7 +60,7 @@ export const compileVirtual = async ({ css, cssPath, platform, themes, polyfills
             ]),
     )
     const varsWithMediaQueries = Object.entries(Processor.varsWithMediaQueries)
-        .map(([key, value]) => `"${key}": ${serialize(value)}`)
+        .map(([key, value]) => `["${key}", ${serialize(value)}]`)
         .join(',')
     const serializedScopedVars = Object.entries(scopedVars)
         .map(([scopedVarsName, scopedVars]) => `"${scopedVarsName}": ({ ${scopedVars} }),`)
@@ -71,7 +71,7 @@ export const compileVirtual = async ({ css, cssPath, platform, themes, polyfills
         '({',
         `scopedVars: ({ ${serializedScopedVars} }),`,
         `vars: ({ ${currentColorVar} ${vars} }),`,
-        `varsWithMediaQueries: ({ ${varsWithMediaQueries} }),`,
+        `varsWithMediaQueries: ([ ${varsWithMediaQueries} ]),`,
         `stylesheet: ({ ${stylesheet} }),`,
         '})',
     ].join('')

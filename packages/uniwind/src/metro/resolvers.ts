@@ -60,6 +60,14 @@ export const nativeResolver = (extraComponents: Record<string, string>) =>
         return resolver(context, `${name}/components`, platform)
     }
 
+    if (moduleName === 'react-native-gesture-handler') {
+        return resolver(context, `${name}/components/native/react-native-gesture-handler`, platform)
+    }
+
+    if (moduleName === 'react-native-svg') {
+        return resolver(context, `${name}/components/native/react-native-svg`, platform)
+    }
+
     if (
         resolution.filePath.includes(`${sep}react-native${sep}Libraries${sep}`)
     ) {

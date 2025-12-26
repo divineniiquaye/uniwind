@@ -1,4 +1,5 @@
 import { Appearance, Dimensions, I18nManager, PixelRatio, StyleSheet } from 'react-native'
+import { initialWindowMetrics } from 'react-native-safe-area-context'
 import { ColorScheme, Orientation } from '../../types'
 import type { UniwindRuntime as UniwindRuntimeType } from '../types'
 import { colorMix, lightDark } from './native-utils'
@@ -17,12 +18,7 @@ export const UniwindRuntime = {
     fontScale: value => value * PixelRatio.getFontScale(),
     hairlineWidth: StyleSheet.hairlineWidth,
     rtl: I18nManager.isRTL,
-    insets: {
-        top: 0,
-        left: 0,
-        bottom: 0,
-        right: 0,
-    },
+    insets: initialWindowMetrics?.insets ?? { top: 0, left: 0, bottom: 0, right: 0 },
     colorMix,
     pixelRatio: value => value * PixelRatio.get(),
     cubicBezier: () => '',

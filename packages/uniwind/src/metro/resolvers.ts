@@ -59,6 +59,10 @@ export const nativeResolver = ({
         return resolver(context, `${name}/components`, platform)
     }
 
+    if (moduleName === 'react-native-gesture-handler') {
+        return resolver(context, `${name}/components/native/react-native-gesture-handler`, platform)
+    }
+
     if (
         resolution.filePath.includes(`${sep}react-native${sep}Libraries${sep}`)
     ) {

@@ -106,4 +106,38 @@ declare module 'react-native' {
     interface InputAccessoryViewProps {
         backgroundColorClassName?: string
     }
+
+    interface DrawerLayoutAndroidProps {
+        className?: string
+    }
+}
+
+declare module 'react-native-gesture-handler' {
+    // Button components
+    interface BaseButtonProps {
+        className?: string
+    }
+
+    interface BorderlessButtonProps {
+        className?: string
+    }
+
+    interface RawButtonProps {
+        className?: string
+    }
+
+    interface RectButtonProps {
+        className?: string
+    }
+
+    // Gesture handler specific components
+    interface GestureHandlerRootViewProps {
+        className?: string
+    }
+
+    interface PressableProps {
+        className?: string
+    }
+}
+
 }

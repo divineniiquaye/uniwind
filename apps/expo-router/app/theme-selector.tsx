@@ -3,7 +3,8 @@ import { ThemedText } from '@/components/themed-text'
 import { cn } from '@/utils/cn'
 import { UniwindThemes, useStoredTheme } from '@/utils/theme'
 import { useHeaderHeight } from '@react-navigation/elements'
-import { TouchableOpacity, View } from 'react-native'
+import { View } from 'react-native'
+import { Pressable } from 'react-native-gesture-handler'
 
 export default function ThemeSelectorSheet() {
     const headerHeight = useHeaderHeight()
@@ -25,7 +26,7 @@ export default function ThemeSelectorSheet() {
         }
 
         return (
-            <TouchableOpacity
+            <Pressable
                 onPress={handlePress}
                 className={cn(
                     'flex-1 items-center justify-center py-5 gap-1 rounded-3xl bg-card border-3 border-border',
@@ -34,7 +35,7 @@ export default function ThemeSelectorSheet() {
             >
                 <IconSymbol name={iconName} size={32} color="gray" />
                 <ThemedText className="capitalize text-md">{theme}</ThemedText>
-            </TouchableOpacity>
+            </Pressable>
         )
     }
 

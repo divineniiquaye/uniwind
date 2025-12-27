@@ -1,12 +1,13 @@
 import { ThemeSwitchButton } from '@/components/theme-switch-button'
 import '@/globals.css'
 import { getNavigationTheme, getStoredThemeSync } from '@/utils/theme'
-import { Uniwind, useUniwind } from '@niibase/uniwind'
 import { isLiquidGlassAvailable } from 'expo-glass-effect'
 import { Stack } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
 import React from 'react'
 import { Platform } from 'react-native'
+import { GestureHandlerRootView } from 'react-native-gesture-handler'
+import { Uniwind, useUniwind } from 'uniwind'
 
 // Set initial theme based on user preference
 const initialTheme = getStoredThemeSync()
@@ -37,7 +38,7 @@ export default function RootLayout() {
     const navigationTheme = getNavigationTheme(theme)
 
     return (
-        <React.Fragment>
+        <GestureHandlerRootView className="flex-1">
             <Stack
                 screenOptions={{
                     headerBackButtonDisplayMode: 'minimal',
@@ -112,6 +113,6 @@ export default function RootLayout() {
                 ))}
             </Stack>
             <StatusBar style={theme === 'dark' ? 'light' : 'dark'} />
-        </React.Fragment>
+        </GestureHandlerRootView>
     )
 }

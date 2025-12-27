@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@import "@niibase/uniwind";
+@import "uniwind";
 
 @theme {
   /* Override global variables here */

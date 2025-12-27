@@ -63,7 +63,6 @@
       "dependencies": {
         "@expo/metro-runtime": "6.1.2",
         "@expo/vector-icons": "15.0.3",
-        "@niibase/uniwind": "workspace:*",
         "@react-navigation/bottom-tabs": "7.4.0",
         "@react-navigation/elements": "2.6.3",
         "@react-navigation/native": "7.1.8",
@@ -94,6 +93,7 @@
         "react-native-web": "catalog:",
         "react-native-worklets": "0.5.1",
         "tailwind-merge": "3.4.0",
+        "uniwind": "workspace:@niibase/uniwind@*",
       },
       "devDependencies": {
         "@types/react": "catalog:",
@@ -126,7 +126,7 @@
     },
     "packages/uniwind": {
       "name": "@niibase/uniwind",
-      "version": "1.0.0",
+      "version": "1.0.13",
       "dependencies": {
         "@tailwindcss/node": "4.1.17",
         "@tailwindcss/oxide": "4.1.17",
@@ -2529,6 +2529,8 @@
     "unique-string": ["unique-string@2.0.0", "", { "dependencies": { "crypto-random-string": "^2.0.0" } }, "sha512-uNaeirEPvpZWSgzwsPGtU2zVSTrn/8L5q/IexZmH0eH6SA73CmAA5U4GwORTxQAZs95TAXLNqeLoPPNO5gZfWg=="],
 
     "universalify": ["universalify@2.0.1", "", {}, "sha512-gptHNQghINnc/vTGIk0SOFGFNXw7JVrlRUtConJRlvaw6DuX0wO5Jeko9sWrMBhh+PsYAZ7oXAiOnf/UKogyiw=="],
+
+    "uniwind": ["@niibase/uniwind@workspace:packages/uniwind"],
 
     "uniwind-expo-example": ["uniwind-expo-example@workspace:apps/expo-example"],
 

@@ -16,6 +16,7 @@ const isExcludedDependency = (url: string) =>
     [
         url.includes('node_modules/tailwindcss'),
         url.includes('node_modules/@tailwindcss'),
+        url.includes('node_modules/@niibase/uniwind'),
         url.includes('node_modules/uniwind'),
     ].some(Boolean)
 

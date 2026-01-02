@@ -139,9 +139,3 @@ declare module 'react-native-gesture-handler' {
         className?: string
     }
 }
-
-declare module 'react-native-svg' {
-    interface SvgProps {
-        className?: string
-    }
-}

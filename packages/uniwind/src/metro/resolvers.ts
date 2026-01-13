@@ -50,8 +50,9 @@ export const nativeResolver = (extraComponents: Record<string, string>) =>
     const isInternal = isFromThisModule(context.originModulePath)
     const isFromReactNative = context.originModulePath.includes(`${sep}react-native${sep}`)
         || context.originModulePath.includes(`${sep}@react-native${sep}`)
+    const isReactNativeAnimated = context.originModulePath.includes(`${sep}Animated${sep}components${sep}`)
 
-    if (isInternal || resolution.type !== 'sourceFile' || isFromReactNative) {
+    if (isInternal || resolution.type !== 'sourceFile' || (isFromReactNative && !isReactNativeAnimated)) {
         return resolution
     }
 
